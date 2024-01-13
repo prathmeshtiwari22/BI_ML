@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>House Prediction</title>
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet"
+        integrity="sha384-T3c6CoIi6uLrA9TneNEoa7RxnatzjcDSCmG1MXxSR1GAsXEV/Dwwykc2MPK8M2HN" crossorigin="anonymous">
+</head>
+
+<body class="bg-dark">
+    <div class="container mt-5">
+        <div class="card">
+            <div class="card-header text-center">
+                <h1>Welcome Home</h1>
+            </div>
+            <div class="card-body">
+                <!-- User input form -->
+                <form method="post" accept-charset="utf-8">
+                    <div class="row">
+                        <div class="col-md-6 form-group">
+                            <label for="location"><b>Select Place</b></label>
+                            <!-- Dropdown for selecting location -->
+                            <select class="form-select" id="location" name="location" required="1">
+                                <!-- Populate options dynamically from Flask -->
+                                {% for location in locations %}
+                                <option value="{{location}}">{{location}}</option>
+                                {% endfor %}
+                            </select>
+                        </div>
+                        <div class="col-md-6 form-group">
+                            <label for="bhk"><b>Select BHK</b></label>
+                            <!-- Input field for BHK selection -->
+                            <input type="text" class="form-control" id="bhk" name="bhk" placeholder="Enter BHK">
+                        </div>
+                        <div class="col-md-6 form-group">
+                            <label for="bath"><b>Enter Number of BR</b></label>
+                            <!-- Input field for the number of bathrooms -->
+                            <input type="text" class="form-control" id="bath" name="bath"
+                                placeholder="Number of Bathrooms">
+                        </div>
+                        <div class="col-md-6 form-group">
+                            <label for="total_sqft"><b>Select Square Feet:</b></label>
+                            <!-- Input field for total square feet -->
+                            <input type="text" class="form-control" id="total_sqft" name="total_sqft"
+                                placeholder="Enter Square Feet">
+                        </div>
+                        <div class="col-md-12 form-group">
+                            <br>
+                            <!-- Predict button -->
+                            <button class="btn btn-primary form-control" onclick="send_data()">Predict</button>
+                        </div>
+                    </div>
+                </form>
+                <br>
+                <div class="col-md-12 text-center">
+                    <!-- Display prediction result here -->
+                    <h1><span id="Predict"></span></h1>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- JavaScript for handling form submission and updating result -->
+    <script>
+        function form_handler(event) {
+            event.preventDefault();
+        }
+
+        function send_data() {
+            document.querySelector('form').addEventListener('submit', form_handler);
+            var fd = new FormData(document.querySelector('form'));
+
+            var xhr = new XMLHttpRequest();
+
+            // Send data to the Flask server for prediction
+            xhr.open('POST', '/predict', true);
+            document.getElementById('Predict').innerHTML = "Loading....";
+
+            xhr.onreadystatechange = function () {
+                if (xhr.readyState == XMLHttpRequest.DONE) {
+                    // Update the result on completion
+                    document.getElementById('Predict').innerHTML = "Predicted Price: RS " + xhr.responseText;
+                }
+            };
+
+            xhr.send(fd);
+        }
+    </script>
+
+    <!-- Bootstrap and Popper.js scripts -->
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.8/dist/umd/popper.min.js"
+        integrity="sha384-I7E8VVD/ismYTF4hNIPjVp/Zjvgyol6VFvRkX/vR+Vc4jQkC+hVqc2pM8ODewa9r"
+        crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"
+        integrity="sha384-C6RzsynM9kWDrMNeT87bh95OGNyZPhcTNXj1NW7RuBCsyN/o0jlpcV8Qyq46cDfL"
+        crossorigin="anonymous"></script>
+    <!-- Include your custom scripts here -->
+</body>
+
+</html>
